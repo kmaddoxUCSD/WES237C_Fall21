@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vivadoHLSLog:LogRoot xmlns:vivadoHLSLog="www.xilinx.com/vivadoHLSLog">
+  <errorLogs>
+    <logs>
+      <synLog/>
+      <simLog/>
+      <mgLog/>
+      <packageLog/>
+      <csimLog/>
+    </logs>
+  </errorLogs>
+  <warningLogs>
+    <logs>
+      <synLog>
+        <logs message="WARNING: [RTGEN 206-101] Design contains AXI ports. Reset is fixed to synchronous and active low." projectName="Project1_FIR128" solutionName="solution1" date="2021-10-07T19:22:55.030-0700" type="Warning"/>
+        <logs message="WARNING: [HLS 214-167] The program may have out of bound array access (fir.cpp:40:15)" projectName="Project1_FIR128" solutionName="solution1" date="2021-10-07T19:22:51.512-0700" type="Warning"/>
+        <logs message="WARNING: [HLS 207-5301] unused parameter 'x': fir.cpp:17:68" projectName="Project1_FIR128" solutionName="solution1" date="2021-10-07T19:22:41.063-0700" type="Warning"/>
+        <logs message="WARNING: [HLS 207-5301] unused parameter 'print': C:/Xilinx/Vitis_HLS/2021.1/common/technology/autopilot\ap_int_base.h:792:16" projectName="Project1_FIR128" solutionName="solution1" date="2021-10-07T19:22:40.820-0700" type="Warning"/>
+      </synLog>
+      <simLog/>
+      <mgLog/>
+      <packageLog/>
+      <csimLog/>
+    </logs>
+  </warningLogs>
+</vivadoHLSLog:LogRoot>

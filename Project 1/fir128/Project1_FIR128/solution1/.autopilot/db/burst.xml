@@ -1,0 +1,6 @@
+<VitisHLS:BurstInfo>
+    <burst group="BURST_VERBOSE_MISSED" fe_name="UnknownUnderlyingObjectMissed" src_info="fir.cpp:40:15" msg_id="214-117" msg_severity="INFO" msg_body="Cannot find or modify the underlying object pointed by getelementptr" ID="bb1.load.7" VarName="_ZZ3firPiiE9shift_reg"/>
+    <burst group="BURST_VERBOSE_MISSED" fe_name="UnknownUnderlyingObjectMissed" src_info="fir.cpp:40:15" msg_id="214-117" msg_severity="INFO" msg_body="Cannot find or modify the underlying object pointed by getelementptr" ID="bb1.store.8" VarName="_ZZ3firPiiE9shift_reg"/>
+    <burst group="BURST_VERBOSE_MISSED" fe_name="UnknownUnderlyingObjectMissed" src_info="C:/Xilinx/Vitis_HLS/2021.1/common/technology/autopilot\ap_int_base.h:225:18" msg_id="214-117" msg_severity="INFO" msg_body="Cannot find or modify the underlying object pointed by getelementptr" ID="bb1.load.12" VarName="c"/>
+</VitisHLS:BurstInfo>
+
