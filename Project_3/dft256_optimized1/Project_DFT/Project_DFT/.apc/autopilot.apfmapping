@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<autopilotfilemapping:AutoPilotFileMapping xmlns:autopilotfilemapping="www.autoesl.com/autopilotfilemapping">
+  <source>
+    <originFiles name="dft_test.cpp" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\dft_test.cpp"/>
+    <originFiles name="dft.h" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\dft.h"/>
+    <originFiles name="dft.cpp" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\dft.cpp"/>
+    <originFiles name="coefficients256.h" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\coefficients256.h"/>
+  </source>
+  <testbench>
+    <originFiles name="script.tcl" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\script.tcl"/>
+    <originFiles name="out.gold.dat" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\out.gold.dat"/>
+    <originFiles name="directives.tcl" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\directives.tcl"/>
+    <originFiles name="dft_test.cpp" path="C:\Users\kevinmaddox\Desktop\WES237C_Fall2021\Read_the_docs-master-2\project_files\project3\dft_256_precomputed\dft_test.cpp"/>
+  </testbench>
+</autopilotfilemapping:AutoPilotFileMapping>
