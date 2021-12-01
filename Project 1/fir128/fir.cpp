@@ -10,56 +10,51 @@
 
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "fir.h"
-#include "ap_int.h"
-#include <iostream>
+//#include <ap_cint.h>
 
-void fir ( data_t *y, data_t x )
+
+void fir ( data_t *y, data_t x, coef_t c[N] )
 {
 
-	//coef_t c[N] = {10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
-	ap_int<10> c[N] = {10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
-	//#pragma HLS array_partition variable=c block factor=4
-	#pragma HLS array_partition variable=c dim2 complete
-	//#pragma HLS array_partition variable=c dim2 cyclic factor=16
-	/*4 a factor of 128; Block partitioning creates smaller arrays from consecutive blocks of the original array.
-	This effectively splits the array into N equal blocks, where N is the integer defined by the factor= argument.*/
-
 	// Write your code here
-	static
-		//data_t shift_reg[N]; //This array is declared static since the data must be persistent across multiple calls to the function.
-		ap_int<10> shift_reg[N];
-		//acc_t acc;
-		ap_int<10> acc;
-		int i;
+#pragma HLS ARRAY_PARTITION variable=c type=complete
 
-		acc = 0;
-		Shift_Accum_Loop:
+	static data_t shift_reg[N];
+//#pragma HLS ARRAY_PARTITION variable=shift_reg type=cyclic
 
-		for(i = N -1; i >= 0; i--){
-			#pragma HLS pipeline II=3
+	acc_t acc;
+	int i;
 
-			/*if (i == 0){
-				acc += x* c[0];
-				shift_reg[0] = x;
-			}else{*/
-				shift_reg[i] = shift_reg[i - 1];
-				acc += shift_reg[i] * c[i];
-		}
-		*y = acc;
-		/*TDL:
-		for (i = N − 1; i > 1; i = i − 2){
+	acc = 0;
 
-			shift reg[i] = shift reg[i − 1];
-			shift reg[i − 1] = shift reg[i − 2];
-		}
-		if (i == 1) {
-		shift reg[1] = shift reg[0];
-		}
-		shift reg[0] = x;
-	}*/
+	TDL:
+#pragma HLS DEPENDENCE variable=shift_reg type=inter //Solution: These dependencies are visualized in the schedule viewer l to help the user understand. Break up these dependencies in the user code.
+	for (i = N - 1; i > 0; i--){
+#pragma HLS pipeline II=1
+		shift_reg[i] = shift_reg[i - 1];
+	}
+
+	shift_reg[0] = x;
+
+	MAC:
+	for (i = N - 1; i >= 2; i -= 3){
+#pragma HLS PIPELINE
+
+		acc += shift_reg[i] * c[i] + shift_reg[i - 1] * c[i - 1] + shift_reg[i - 2] * c[i - 2] + shift_reg[i - 3] * c[i - 3];
+	}
+	for (i = N - 1; i > 0; i--){
+#pragma HLS PIPELINE
+
+		acc += shift_reg[i] * c[i];
+	}
+
+	*y = acc;
+}
 
 
-
-
+//coef_t c[N] = {10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
 

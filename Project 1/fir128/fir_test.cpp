@@ -5,7 +5,6 @@
 		Calls fir() function from fir.cpp
 		Compares the output from fir() with out.gold.dat
 */
-
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -19,6 +18,9 @@ int main () {
   int i;
   signal = 0;
   
+ coef_t taps[N] = {10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 8, 3, -3, -8, -11, -11, -10, -10, -10, -10, -10, -10, -10, -10, -11, -11, -8, -3, 3, 8, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
+
+
 
   fin=fopen("input.dat","r");
   fp=fopen("out.dat","w");
@@ -26,7 +28,7 @@ int main () {
   for (i=0;i<SAMPLES;i++) {
 	fscanf(fin,"%d",&signal);
 	//Call the HLS block
-    fir(&output,signal);
+    fir(&output,signal,taps);
     // Save the results.
     fprintf(fp,"%d\n",output);
     printf("%i %d %d\n",i,signal,output);
@@ -50,4 +52,3 @@ int main () {
     }
 
 }
-

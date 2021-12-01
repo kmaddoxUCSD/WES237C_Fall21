@@ -9,31 +9,40 @@
 		y: filtered output
 
 */
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "fir.h"
+#include <ap_cint.h>
 
-void fir ( data_t *y, data_t x){
-	coef_t c[N] = {53, 0, -91, 0, 313, 500, 313, 0, -91, 0,53};
+
+void fir ( data_t *y, coef_t c[N], data_t x )
+{
+	//coef_t c[N] = {53, 0, -91, 0, 313, 500, 313, 0, -91, 0,53};
 	// Write your code here
-	static
-	 data_t shift_reg[N]; //This array is declared static since the data must be persistent across multiple calls to the function.
+#pragma HLS ARRAY_PARTITION variable=c type=complete
+
+	static data_t shift_reg[N];
+#pragma HLS ARRAY_PARTITION variable=shift_reg type=complete
+
 	acc_t acc;
 	int i;
-
+	data_t data;
 	acc = 0;
-	//Shift_Accum_Loop:
 
-	for(i = N -1; i >= 0; i--){
-		#pragma HLS pipeline II=2
+Shift_Accum_Loop:
+	for (i = N-1; i >= 0; i--){
+#pragma HLS UNROLL
 		if (i == 0){
-			acc += x * c[0];
 			shift_reg[0] = x;
-		}else{
-			shift_reg[i] = shift_reg[i - 1];
-			acc += shift_reg[i] * c[i];
+			data = x;
 		}
+		else{
+			shift_reg[i] = shift_reg[i - 1];
+			data = shift_reg[i];
+		}
+		acc += data * c[i];
 	}
+
 	*y = acc;
 }
-
-

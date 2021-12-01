@@ -16,17 +16,23 @@ int main () {
   FILE         *fp, *fin;
 
   data_t signal, output;
-  int i;
+  int i, ramp_up;
+
   signal = 0;
+  ramp_up = 1;
   
+  coef_t taps[N] = {53, 0, -91, 0, 313, 500, 313, 0, -91, 0, 53};
+
 
   fin=fopen("input.dat","r");
   fp=fopen("out.dat","w");
 
   for (i=0;i<SAMPLES;i++) {
 	fscanf(fin,"%d",&signal);
+
 	//Call the HLS block
-    fir(&output,signal);
+    fir(&output,taps,signal);
+
     // Save the results.
     fprintf(fp,"%d\n",output);
     printf("%i %d %d\n",i,signal,output);
@@ -34,6 +40,7 @@ int main () {
 
   fclose(fp);
   fclose(fin);
+
 
   //Comparing results with the golden output.
   printf ("Comparing against output data \n");
