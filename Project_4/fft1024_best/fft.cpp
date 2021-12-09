@@ -23,15 +23,8 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 #pragma HLS interface ap_ctrl_chain port=return
 #pragma HLS dataflow
 
-
-
-	  DTYPE Stage7_R[SIZE], Stage7_I[SIZE];
-	  DTYPE Stage8_R[SIZE], Stage8_I[SIZE];
-	  DTYPE Stage9_R[SIZE], Stage9_I[SIZE];
-	  DTYPE Stage10_R[SIZE], Stage10_I[SIZE];
 	  DTYPE Stage1_R[SIZE], Stage1_I[SIZE];
 #pragma HLS array_partition variable=Stage1_R cyclic factor=16 dim=1
-
 #pragma HLS array_partition variable=Stage1_I cyclic factor=16 dim=1
 	  DTYPE Stage2_R[SIZE], Stage2_I[SIZE];
 #pragma HLS array_partition variable=Stage2_R cyclic factor=16 dim=1
@@ -48,12 +41,16 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 	  DTYPE Stage6_R[SIZE], Stage6_I[SIZE];
 #pragma HLS array_partition variable=Stage6_R cyclic factor=8 dim=1
 #pragma HLS array_partition variable=Stage6_I cyclic factor=8 dim=1
+	  DTYPE Stage7_R[SIZE], Stage7_I[SIZE];
 #pragma HLS array_partition variable=Stage7_R cyclic factor=8 dim=1
 #pragma HLS array_partition variable=Stage7_I cyclic factor=8 dim=1
+	  DTYPE Stage8_R[SIZE], Stage8_I[SIZE];
 #pragma HLS array_partition variable=Stage8_R cyclic factor=8 dim=1
 #pragma HLS array_partition variable=Stage8_I cyclic factor=8 dim=1
+	  DTYPE Stage9_R[SIZE], Stage9_I[SIZE];
 #pragma HLS array_partition variable=Stage9_R cyclic factor=8 dim=1
 #pragma HLS array_partition variable=Stage9_I cyclic factor=8 dim=1
+	  DTYPE Stage10_R[SIZE], Stage10_I[SIZE];
 #pragma HLS array_partition variable=Stage10_R cyclic factor=8 dim=1
 #pragma HLS array_partition variable=Stage10_I cyclic factor=8 dim=1
 #pragma HLS array_partition variable=OUT_R cyclic factor=8 dim=1
@@ -62,6 +59,7 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
   bit_reverse(X_R, X_I, Stage1_R, Stage1_I);
 
   fft_stage_first(Stage1_R, Stage1_I, Stage2_R, Stage2_I);
+//#pragma HLS pipeline II=1
   fft_stages<2>(Stage2_R, Stage2_I, Stage3_R, Stage3_I);
   fft_stages<3>(Stage3_R, Stage3_I, Stage4_R, Stage4_I);
   fft_stages<4>(Stage4_R, Stage4_I, Stage5_R, Stage5_I);
@@ -75,6 +73,7 @@ void fft(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I[SIZE])
 unsigned int reverse_bits(unsigned int input) {
   int i, rev = 0;
   for (i = 0; i < M; i++) {
+//#pragma HLS pipeline II=2
     rev = (rev << 1) | (input & 1);
     input = input >> 1;
   }
@@ -86,10 +85,10 @@ void bit_reverse(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_
 	  unsigned int reversed;
 	  unsigned int i;
 
-#pragma HLS DEPENDENCE variable=OUT_I intra WAW false
-#pragma HLS DEPENDENCE variable=OUT_R intra WAW false
+//#pragma HLS DEPENDENCE variable=OUT_I intra WAW false
+//#pragma HLS DEPENDENCE variable=OUT_R intra WAW false
 	  for (int i = 0; i < SIZE; i++) {
-	  #pragma HLS pipeline II=1
+#pragma HLS pipeline II=2
 		  reversed = reverse_bits(i); // Find the bit reversed index
 	    if (i < reversed) {
 	      // Swap the real values
@@ -120,7 +119,9 @@ void fft_stage_first(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE 
 	  // Compute butterflies that use same W**k
 	  dft_loop:
 	  for (int i = 0; i < SIZE; i += DFTpts) {
-#pragma HLS unroll factor=8
+//#pragma HLS unroll factor=8
+#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE
 		  int i_lower = i + numBF; // index of lower point in butterfly
 	    // i: 0, 2, 4, ...
 	    // i_lower: 1, 3, 5, ...
@@ -145,11 +146,14 @@ void fft_stages(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I
   // 4-512
   const int numBF = DFTpts / 2;     // Butterfly WIDTHS in sub-DFT
   const int loop_times = SIZE / DFTpts;
-  // 2-256
+  // 2-2
 
   // Perform butterflies for j-th stage
   butterfly_loop:
   for (int j = 0; j < numBF; j++) {
+#pragma HLS unroll factor=16
+//#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE
     DTYPE c = W_real[j << (10 - stage)];
     DTYPE s = W_imag[j << (10 - stage)];
 
@@ -158,7 +162,9 @@ void fft_stages(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE OUT_I
     // covering 0-1024 all the elements when enumerating j
     dft_loop:
     for (int i_tmp = 0; i_tmp < loop_times; ++i_tmp) {
- #pragma HLS unroll factor=8
+//#pragma HLS unroll factor=8
+#pragma HLS PIPELINE
+#pragma HLS DEPENDENCE
       int i = i_tmp * DFTpts + j;
       int i_lower = i + numBF; // index of lower point in butterfly
       DTYPE xr_lower = X_R[i_lower];
@@ -185,6 +191,8 @@ void fft_stage_last(DTYPE X_R[SIZE], DTYPE X_I[SIZE], DTYPE OUT_R[SIZE], DTYPE O
 	  butterfly_loop:
 	  for (int j = 0; j < numBF; j++) {
 #pragma HLS unroll factor=16
+//#pragma HLS PIPELINE
+//#pragma HLS DEPENDENCE
 		DTYPE c = W_real[j];
 	    DTYPE s = W_imag[j];
 	    // Compute butterflies that use same W**k

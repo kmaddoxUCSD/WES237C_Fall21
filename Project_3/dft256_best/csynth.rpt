@@ -1,0 +1,104 @@
+
+
+================================================================
+== Synthesis Summary Report of 'dft'
+================================================================
++ General Information: 
+    * Date:           Fri Nov  5 01:18:52 2021
+    * Version:        2021.1 (Build 3247384 on Thu Jun 10 19:36:33 MDT 2021)
+    * Project:        Project_DFT
+    * Solution:       solution1 (Vivado IP Flow Target)
+    * Product family: zynq
+    * Target device:  xc7z020-clg400-1
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +---------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+------------+--------------+---------------+---------------+-----+
+    |                   Modules                   | Issue|      | Latency |  Latency  | Iteration|         | Trip |          |            |              |               |               |     |
+    |                   & Loops                   | Type | Slack| (cycles)|    (ns)   |  Latency | Interval| Count| Pipelined|    BRAM    |      DSP     |       FF      |      LUT      | URAM|
+    +---------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+------------+--------------+---------------+---------------+-----+
+    |+ dft                                        |     -|  0.22|     2191|  2.191e+04|         -|     2192|     -|        no|  510 (182%)|  4080 (1854%)|  304020 (285%)|  158203 (297%)|    -|
+    | + grp_dft_Pipeline_VITIS_LOOP_40_1_fu_5184  |     -|  0.22|     1800|  1.800e+04|         -|     1800|     -|        no|  508 (181%)|  4070 (1850%)|  286638 (269%)|  153242 (288%)|    -|
+    |  o VITIS_LOOP_40_1                          |     -|  7.30|     1798|  1.798e+04|      1544|        1|   256|       yes|           -|             -|              -|              -|    -|
+    | + grp_dft_Pipeline_VITIS_LOOP_60_3_fu_5706  |     -|  1.11|      260|  2.600e+03|         -|      260|     -|        no|           -|             -|      227 (~0%)|       766 (1%)|    -|
+    |  o VITIS_LOOP_60_3                          |     -|  7.30|      258|  2.580e+03|         4|        1|   256|       yes|           -|             -|              -|              -|    -|
+    +---------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+------------+--------------+---------------+---------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* S_AXILITE
++---------------+------------+---------------+
+| Interface     | Data Width | Address Width |
++---------------+------------+---------------+
+| s_axi_control | 32         | 4             |
++---------------+------------+---------------+
+
+* AP_MEMORY
++----------------------+----------+
+| Interface            | Bitwidth |
++----------------------+----------+
+| sample_imag_address0 | 8        |
+| sample_imag_address1 | 8        |
+| sample_imag_d0       | 16       |
+| sample_imag_q0       | 16       |
+| sample_imag_q1       | 16       |
+| sample_real_address0 | 8        |
+| sample_real_address1 | 8        |
+| sample_real_d0       | 16       |
+| sample_real_q0       | 16       |
+| sample_real_q1       | 16       |
++----------------------+----------+
+
+* TOP LEVEL CONTROL
++-----------+------------+-----------+
+| Interface | Type       | Ports     |
++-----------+------------+-----------+
+| ap_clk    | clock      | ap_clk    |
+| ap_rst_n  | reset      | ap_rst_n  |
+| interrupt | interrupt  | interrupt |
+| ap_ctrl   | ap_ctrl_hs |           |
++-----------+------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++-------------+-----------+----------+
+| Argument    | Direction | Datatype |
++-------------+-----------+----------+
+| sample_real | inout     | __fp16*  |
+| sample_imag | inout     | __fp16*  |
++-------------+-----------+----------+
+
+* SW-to-HW Mapping
++-------------+----------------------+---------+----------+
+| Argument    | HW Name              | HW Type | HW Usage |
++-------------+----------------------+---------+----------+
+| sample_real | sample_real_address0 | port    | offset   |
+| sample_real | sample_real_ce0      | port    |          |
+| sample_real | sample_real_we0      | port    |          |
+| sample_real | sample_real_d0       | port    |          |
+| sample_real | sample_real_q0       | port    |          |
+| sample_real | sample_real_address1 | port    | offset   |
+| sample_real | sample_real_ce1      | port    |          |
+| sample_real | sample_real_q1       | port    |          |
+| sample_imag | sample_imag_address0 | port    | offset   |
+| sample_imag | sample_imag_ce0      | port    |          |
+| sample_imag | sample_imag_we0      | port    |          |
+| sample_imag | sample_imag_d0       | port    |          |
+| sample_imag | sample_imag_q0       | port    |          |
+| sample_imag | sample_imag_address1 | port    | offset   |
+| sample_imag | sample_imag_ce1      | port    |          |
+| sample_imag | sample_imag_q1       | port    |          |
++-------------+----------------------+---------+----------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+
